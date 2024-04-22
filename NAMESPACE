@@ -1,0 +1,7 @@
+importFrom("graphics", "abline", "lines", "par", "points", "segments")
+    importFrom("methods", "new")
+    importFrom("stats", "na.omit", "predict", "smooth.spline")
+    importFrom("utils", "head", "str", "tail")
+
+exportPattern("^[[:alpha:]]+")
+
