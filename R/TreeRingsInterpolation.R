@@ -289,10 +289,11 @@ TreeRingsInterpolation <- function(TR) {
 #'  slotNames(TR.)
 #'  str(TR.)
 #'  Lplot(TR.@L2)
-#'
+#'  return(TR.)
 #' }
 #'
-#'  test_TreeRingShape()
+#'  TR. <- test_TreeRingShape()
+#'  DiskInfo(TR.)
 #'
 
 TreeRingShape <- function(P_filename, L_filename, L2_filename, P_id.tag = "id", P_ring.tag = "ring", L_ring.tag = "ring") {
@@ -317,5 +318,58 @@ TreeRingShape <- function(P_filename, L_filename, L2_filename, P_id.tag = "id", 
   TR <- TreeRingsInterpolation(TR)
 
   return(TR)
+
+}
+
+#'  Return information for tree disk analysed from  TreeRingShape class
+#'
+#' @param TR. class of TreeRingShape
+#' @param dpi Resolution of tree disk image
+#'
+#' @return data frame of information for tree disk analysed
+#' @export
+#'
+#'@seealso \code{\link{TreeRingShape}}
+#'
+DiskInfo <- function(TR.,dpi=1200){
+  #dpi <- 1200      # resolution of tree disk image
+  mm <-25.4/dpi
+  Width_mm <- round((max(TR.@L_$x)-min(TR.@L_$x))*mm)   # diameter of tree disk (x)
+  Height_mm <- round((max(TR.@L_$y)-min(TR.@L_$y))*mm )  # diameter of tree disk (y)
+  Circumference_mm <- round( circumference(TR.@L[[1]]*mm))
+  L2_n <- TR.@n_YR   # 186
+  L2_points_n <- sum(sapply(TR.@L2,nrow)) # 17810 : Total number of tree ring lines inputed
+  L2_total_length_mm <- round(sum(sapply(TR.@L2,circumference))*mm)
+  L_n  <- TR.@ln     #  38
+  L_points_n <- nrow(TR.@L_) # 17810 : Total number of tree ring lines inputed
+  L_total_length_mm <- round(sum(sapply(TR.@L,circumference))*mm)
+  Mean_distance_between_L_points_um <- round(L_total_length_mm/L_points_n*1000)
+  P_points_total_n <- nrow(TR.@P)  # 3773
+  P_points_radial_n <- 8*L2_n  # 3773
+  P_points_partial_n <- P_points_total_n-P_points_radial_n   # 3773
+  Total_points_input_manually <- L_points_n + P_points_total_n
+  L_L2_length_pct <-round(100*L_total_length_mm / L2_total_length_mm )
+  L_L2_points_pct <-round(100*L_points_n / L2_points_n )
+
+  df<-data.frame(Width_mm,
+                 Height_mm,
+                 Circumference_mm,
+                 L2_n,
+                 L2_points_n,
+                 L2_total_length_mm,
+                 L_n,
+                 L_points_n,
+                 L_total_length_mm,
+                 Mean_distance_between_L_points_um,
+                 P_points_total_n,
+                 P_points_radial_n,
+                 P_points_partial_n,
+                 Total_points_input_manually,
+                 L_L2_length_pct,
+                 L_L2_points_pct)
+
+  df <- t(data.frame(df))
+  colnames(df)[1]<-TR.@L2_filename
+  return(df)
 
 }
